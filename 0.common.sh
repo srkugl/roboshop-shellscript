@@ -1,7 +1,7 @@
 #!/bin/bash
 USERID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPT_NAME=$(basename $0 | cut -d "." -f1)
+SCRIPT_NAME=$(basename "$0" | sed 's/\.[^.]*$//')
 LOGFILE="/tmp/$SCRIPT_NAME-$TIMESTAMP.log"
 R="\e[31m"
 G="\e[32m"
