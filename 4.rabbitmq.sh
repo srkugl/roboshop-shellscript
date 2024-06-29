@@ -26,9 +26,15 @@ echo "Starting RabbitMQ service..." | tee -a "$LOGFILE"
 systemctl start rabbitmq-server >> "$LOGFILE" 2>&1
 VALIDATE $? "Starting RabbitMQ service"
 
-echo "Creating RabbitMQ user..." | tee -a "$LOGFILE"
-rabbitmqctl add_user roboshop roboshop123 >> "$LOGFILE" 2>&1
-VALIDATE $? "Creating RabbitMQ user"
+echo "Checking if RabbitMQ user 'roboshop' exists..." | tee -a "$LOGFILE"
+rabbitmqctl list_users | grep -q "^roboshop"
+if [ $? -eq 0 ]; then
+    echo "RabbitMQ user 'roboshop' already exists. Skipping user creation." | tee -a "$LOGFILE"
+else
+    echo "Creating RabbitMQ user 'roboshop'..." | tee -a "$LOGFILE"
+    rabbitmqctl add_user roboshop roboshop123 >> "$LOGFILE" 2>&1
+    VALIDATE $? "Creating RabbitMQ user"
+fi
 
 echo "Setting permissions for RabbitMQ user..." | tee -a "$LOGFILE"
 rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" >> "$LOGFILE" 2>&1
